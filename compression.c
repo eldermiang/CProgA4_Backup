@@ -36,7 +36,7 @@ void runCompressMenu() {
                 break;
 
                 case 2 :
-                run_length_decode(string);
+                /*run_length_decode(string);*/
                 break;
 
                 case 3 :
@@ -114,7 +114,7 @@ void run_length_encode(char* string) {
     }
     /* Writing encoded_text to new_database */
      new_database = fopen("compressed_database", "w");
-
+    
     if (new_database == NULL) {
         printf("Read error");
     }
@@ -126,12 +126,12 @@ void run_length_encode(char* string) {
 }
 
 /* Kenson */
+
 void run_length_decode(char* string) {
     
-    char * string_db;
     char ch;
-
     FILE * db, *new_db;
+  
 
     db = fopen("compressed_database", "r");
     new_db = fopen("decompressed_database", "w");
@@ -140,9 +140,17 @@ void run_length_decode(char* string) {
         printf("Read error");
     }
     
-    ch = fgetc(db)
+    ch = fgetc(db);
     while ( ch != EOF) {
        
+       if ( ch >= '0' && ch <= '9' ) {
+           
+       }
+
+       else {
+           fscanf(new_db, "%c", ch);
+       }
+       ch = fgetc(db);
     }
     
 
