@@ -286,7 +286,7 @@ void exportDatabase(customer_t* customers, int* currIndex) {
  *- none
  *******************************************************************************/
 void importDatabase(customer_t* customers, int* currIndex) {
-    char character;
+    int number_of_lines, i = 0;
 
     /* open file in read mode */
     FILE* fp = fopen("customer_database", "r");
@@ -298,36 +298,41 @@ void importDatabase(customer_t* customers, int* currIndex) {
     if ( fp == NULL ) {
         printf("Database failed to be read\n");
     }
-    
-    character = fgetc(fp);
+        
+    char c;
+    c = fgetc(fp);
+    while(c != EOF) {
+        if (c == '\n') {
+            number_of_lines = number_of_lines + 1;
+        }
+        c = fgetc(fp);
+    }
+   
+    rewind(fp);
 
     /* count every new line */
-    int number_of_lines = 0;
-    while ( character != EOF ) {
-        if ( character == '\n') {
-            number_of_lines += 1;
-        }
-        character = fgetc(fp);
-    }
-     
-    /* reset file position */
-    rewind(fp); 
-    
-    int i = 0;
     while ( i < number_of_lines ) {
-        if ( fscanf(fp, "%s %s %d %d %d %s %s\n", 
-            customers[i].name,
-            customers[i].phoneNumber,
-            &customers[i].dateOfBirth.day,
-            &customers[i].dateOfBirth.month,
-            &customers[i].dateOfBirth.year,
-            customers[i].cardNo,
-            customers[i].cardcvv) ) {
-            i++;
-        }
-       
-    }
-    printf("Customer data successfully imported from database file\n");
+            if (fscanf(fp, "%s %s %d %d %d %s %s\n", 
+                customers[i].name,
+                customers[i].phoneNumber,
+                &customers[i].dateOfBirth.day,
+                &customers[i].dateOfBirth.month,
+                &customers[i].dateOfBirth.year,
+                customers[i].cardNo,
+                customers[i].cardcvv) == 7 )  {
+                i++;    
+            }
+            else {
+                number_of_lines = 0;
+                printf("Failed to import database\n");
+                break;
+            }  
+      }  
+      
+      if (number_of_lines > 0 ) {
+          printf("Database successfully imported\n");
+      }
+        
     /* updating customer position in list */
     *currIndex = number_of_lines;
     fclose(fp);
