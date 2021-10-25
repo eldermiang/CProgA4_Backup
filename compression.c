@@ -72,9 +72,8 @@ void runCompressMenu() {
  *- string_db
  *******************************************************************************/
 char* readDatabase() {
-    
     char * string_db;
-    char buffer[500];
+    int fileSize = 0;
     char ch;
 
     FILE * database;
@@ -83,7 +82,13 @@ char* readDatabase() {
     if (database == NULL) {
         printf("Read error");
     }
-    
+
+    /* Get length of a file */
+    fseek(database, 0, SEEK_END);
+    fileSize = ftell(database);
+    rewind(database);
+
+    char buffer[fileSize+1];
     /* Read through database by chars and append to buffer */
     while((ch = fgetc(database)) != EOF) {
         strncat(buffer, &ch, 1);
@@ -106,12 +111,11 @@ char* readDatabase() {
  *- none
  *******************************************************************************/
 void run_length_encode(char* string) {
-   
     int char_count;
     int x;
     int length = strlen(string);
     char run_count[length];
-    char encoded_text[500];
+    char encoded_text[length];
     char token = '.';
 
     FILE * new_database, * database;
@@ -222,5 +226,5 @@ void run_length_decode() {
     fclose(db);
     fclose(new_db);
 
-    printf("Run-length encoding successful!\n");
+    printf("Run-length decoding successful!\n");
 }

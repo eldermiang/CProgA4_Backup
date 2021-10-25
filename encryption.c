@@ -23,7 +23,7 @@ void printEncryptionMenu() {
 }
 
 /*******************************************************************************
- *This function runs the encryption options and handels the users choice.
+ *This function runs the encryption options and handles the users choice.
  *inputs:
  *- none
  *outputs:
@@ -139,3 +139,13 @@ int databaseDecryption(){
     fclose(fp2);
     return 0;
 }
+
+/* Generates a 6 digit key for encryption and decryption */
+/*
+char* generateKey() {
+    char* key[7];
+    char segment;
+    segment = (rand() % 26);
+    return key;
+}
+*/

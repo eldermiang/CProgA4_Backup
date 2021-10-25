@@ -18,8 +18,7 @@
 
 /* Michael */
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This functions displays the options available within the database menu. 
  *inputs:
  *- none
  *outputs:
@@ -38,10 +37,11 @@ void printCustomerMenu() {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function runs the database menu and handles the user's choice. It also
+ *transfers the initialised customer data from the main menu to the functions.
  *inputs:
- *- none
+ *- Customer list
+ *- Current index in list
  *outputs:
  *- none
  *******************************************************************************/
@@ -83,10 +83,11 @@ void runCustomerMenu(customer_t* customers, int* currIndex) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function adds a new customer to the customer list while performing
+ *validation on the input.
  *inputs:
- *- none
+ *- Customer list
+ *- Current index in list
  *outputs:
  *- none
  *******************************************************************************/
@@ -97,7 +98,7 @@ void addCustomer(customer_t* customers, int* currIndex) {
         printf("Max number of customers reached. Exitting\n");
         return;
     }
-
+    /* Set the current customer's details*/
     setName(&currCustomer);
     setPhoneNo(&currCustomer);
     setBirthDay(&currCustomer);
@@ -107,25 +108,32 @@ void addCustomer(customer_t* customers, int* currIndex) {
     setCardCvv(&currCustomer);
 
     customers[*currIndex] = currCustomer;
+    /* Increment the current index */
     *currIndex += 1;
     printf("Customer '%s' successfully added\n", currCustomer.name);
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function deletes the customer at the index selected by the user in
+ *the internal database.
  *inputs:
- *- none
+ *- Customer list
+ *- Current index in list
  *outputs:
  *- none
  *******************************************************************************/
 void deleteCustomer(customer_t* customers, int* currIndex) {
+    if (*currIndex == 0) {
+        printf("No customers in the database\n");
+        return;
+    }
+
     int selectedIndex = 0;
     printf("Select a customer to delete>");
     scanf("%d", &selectedIndex);
     selectedIndex -= 1;
 
-    if (selectedIndex > *currIndex || selectedIndex < 0 || *currIndex == 0) {
+    if (selectedIndex > *currIndex || selectedIndex < 0) {
         printf("Delete error, customer does not exist\n");
         return;
     }
@@ -147,20 +155,26 @@ void deleteCustomer(customer_t* customers, int* currIndex) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function edits the customer at the index selected by the user. It also
+ *provides options to select which field to edit e.g. Name, phone number
  *inputs:
- *- none
+ *- Customer list
+ *- Current index in list
  *outputs:
  *- none
  *******************************************************************************/
 void editCustomer(customer_t* customers, int* currIndex) {
+    if (*currIndex == 0) {
+        printf("No customers in the database\n");
+        return;
+    }
+
     int selectedIndex = 0;
     printf("Select a customer to edit>");
     scanf("%d", &selectedIndex);
     selectedIndex -= 1;
 
-    if (selectedIndex > *currIndex || selectedIndex < 0 || *currIndex == 0) {
+    if (selectedIndex > *currIndex || selectedIndex < 0) {
         printf("Edit error, customer does not exist\n");
         return;
     }
@@ -172,14 +186,19 @@ void editCustomer(customer_t* customers, int* currIndex) {
 
 /* Kenson */
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function displays all of the available customers in the internal database.
  *inputs:
- *- none
+ *- Customer list
+ *- Current index in list
  *outputs:
  *- none
  *******************************************************************************/
 void displayCustomers(customer_t* customers, int* currIndex) {
+    if (*currIndex == 0) {
+        printf("No customers in the database\n");
+        return;
+    }
+
     int num_customer = 1;
     int i;
     char* empty_space = " ";
@@ -210,16 +229,20 @@ void displayCustomers(customer_t* customers, int* currIndex) {
 }
 
 /* Kenson */
-/* we should decide when we want to encrypt / compress the data  */
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This functions exports all of the customers in the internal database to and
+ *external file.
  *inputs:
- *- none
+ *- Customer list
+ *- Current index in list
  *outputs:
  *- none
  *******************************************************************************/
 void exportDatabase(customer_t* customers, int* currIndex) {
+    if (*currIndex == 0) {
+        printf("No customers in the database\n");
+        return;
+    }
     
     FILE* fp = fopen("customer_database", "w");
     int i = 0;
@@ -254,15 +277,17 @@ void exportDatabase(customer_t* customers, int* currIndex) {
 
 /* kenson */
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function imports all of the customers from an external file to the
+ *internal customer database in the program.
  *inputs:
- *- none
+ *- Customer list
+ *- Current index in list
  *outputs:
  *- none
  *******************************************************************************/
 void importDatabase(customer_t* customers, int* currIndex) {
     char character;
+
     /* open file in read mode */
     FILE* fp = fopen("customer_database", "r");
     /* Test import database in wrong format*/
@@ -290,15 +315,17 @@ void importDatabase(customer_t* customers, int* currIndex) {
     
     int i = 0;
     while ( i < number_of_lines ) {
-        fscanf(fp, "%s %s %d %d %d %s %s\n", 
-                customers[i].name,
-                customers[i].phoneNumber,
-                &customers[i].dateOfBirth.day,
-                &customers[i].dateOfBirth.month,
-                &customers[i].dateOfBirth.year,
-                customers[i].cardNo,
-                customers[i].cardcvv);
-                i++;
+        if ( fscanf(fp, "%s %s %d %d %d %s %s\n", 
+            customers[i].name,
+            customers[i].phoneNumber,
+            &customers[i].dateOfBirth.day,
+            &customers[i].dateOfBirth.month,
+            &customers[i].dateOfBirth.year,
+            customers[i].cardNo,
+            customers[i].cardcvv) ) {
+            i++;
+        }
+       
     }
     printf("Customer data successfully imported from database file\n");
     /* updating customer position in list */
@@ -308,12 +335,12 @@ void importDatabase(customer_t* customers, int* currIndex) {
 
 /* Utility functions */
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function returns the number of digits or the length of the string 
+ *inputted to this function.
  *inputs:
- *- none
+ *- String of numbers
  *outputs:
- *- none
+ *- Number of digits
  *******************************************************************************/
 int countDigits(char* number) {
     int digits = strlen(number);
@@ -324,8 +351,8 @@ int countDigits(char* number) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This functions displays all of the options available in the edit menu which is
+ *displayed when the user selects to edit customer information.
  *inputs:
  *- none
  *outputs:
@@ -344,10 +371,11 @@ void printEditMenu() {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function runs the edit menu as well as transfers the customer data from
+ *the previous menu to the edit menu.
  *inputs:
- *- none
+ *- Customer list
+ *- Index of the customer being edited
  *outputs:
  *- none
  *******************************************************************************/
@@ -393,10 +421,9 @@ void runEditMenu(customer_t* customers, int selectedIndex) {
 
 /* Functions for setting customer data */
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function sets and validates the name of a customer.
  *inputs:
- *- none
+ *- A customer 
  *outputs:
  *- none
  *******************************************************************************/
@@ -427,10 +454,9 @@ void setName(customer_t* customer) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function sets and validates the phone number of a customer.
  *inputs:
- *- none
+ *- A customer 
  *outputs:
  *- none
  *******************************************************************************/
@@ -463,10 +489,9 @@ void setPhoneNo(customer_t* customer) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function sets and validates the birth day of a customer.
  *inputs:
- *- none
+ *- A customer 
  *outputs:
  *- none
  *******************************************************************************/
@@ -487,10 +512,9 @@ void setBirthDay(customer_t* customer) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function sets and validates the birth month of a customer.
  *inputs:
- *- none
+ *- A customer 
  *outputs:
  *- none
  *******************************************************************************/
@@ -511,10 +535,9 @@ void setBirthMonth(customer_t* customer) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function sets and validates the birth year of a customer.
  *inputs:
- *- none
+ *- A customer 
  *outputs:
  *- none
  *******************************************************************************/
@@ -535,10 +558,9 @@ void setBirthYear(customer_t* customer) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function sets and validates the transaction card number of a customer.
  *inputs:
- *- none
+ *- A customer 
  *outputs:
  *- none
  *******************************************************************************/
@@ -571,10 +593,9 @@ void setCardNo(customer_t* customer) {
 }
 
 /*******************************************************************************
- *This function encrypts the database file containing the customer information
- *using our own style of the ceaser cipher algorithm.
+ *This function sets and validates the transaction card cvv of a customer.
  *inputs:
- *- none
+ *- A customer 
  *outputs:
  *- none
  *******************************************************************************/

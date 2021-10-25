@@ -20,6 +20,14 @@
 #define DEBUG
 #define CUSTOMER_LIMIT 100
 
+/*******************************************************************************
+ *This is the main function and starts up the program by initialising the customers
+ *list and current index then running the main menu.
+ *inputs:
+ *- none
+ *outputs:
+ *- none
+ *******************************************************************************/
 int main(void) {
     /*char* string = "";*/
     customer_t customers[CUSTOMER_LIMIT];
@@ -28,6 +36,14 @@ int main(void) {
 	return 0;
 }
 
+/*******************************************************************************
+ *This function displays the list of options available in the main menu of 
+ *the program.
+ *inputs:
+ *- none
+ *outputs:
+ *- none
+ *******************************************************************************/
 void printMenu() {
     printf("Customer Database System\n"
            "1. Database options\n"
@@ -37,6 +53,16 @@ void printMenu() {
            "Enter a number of your choice>");
 }
 
+/*******************************************************************************
+ *This function runs the main menu of the program, allowing users to select
+ *an option. It also transfers the customer data from the main function to the 
+ *relevant functions where required.
+ *inputs:
+ *- Customers list
+ *- Current index in list
+ *outputs:
+ *- none
+ *******************************************************************************/
 void runMenu(customer_t* customers, int* currIndex) {
     int choice = 0;
     while (choice != 4) {
