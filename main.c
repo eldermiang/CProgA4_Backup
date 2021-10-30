@@ -15,9 +15,6 @@
 #include <string.h>
 #include "a3.h"
 
-/* Remove comment to enable debug mode*/
-
-#define DEBUG
 #define CUSTOMER_LIMIT 100
 
 /*******************************************************************************
@@ -29,7 +26,9 @@
  *- none
  *******************************************************************************/
 int main(void) {
-    /*char* string = "";*/
+    #ifdef DEBUG 
+        printf("Starting program in debugging mode\n");
+    #endif
     customer_t customers[CUSTOMER_LIMIT];
     int currIndex = 0;
     runMenu(customers, &currIndex);
@@ -45,11 +44,13 @@ int main(void) {
  *- none
  *******************************************************************************/
 void printMenu() {
-    printf("Customer Database System\n"
+    printf("*********************************************************\n"
+           "Customer Database System\n"
            "1. Database options\n"
            "2. Encryption options\n" 
            "3. Compression options \n" 
            "4. Exit Program\n"
+           "*********************************************************\n"
            "Enter a number of your choice>");
 }
 

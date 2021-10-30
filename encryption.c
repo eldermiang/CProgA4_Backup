@@ -1,10 +1,10 @@
-#include<stdio.h>
-#include <stdlib.h>
+#include<stdio.h> /*  fgetc, scanf, printf, fopen, fputc, fclose*/
 #include "a3.h"
 /* Rhys Ly*/
 
-    FILE *fp1, *fp2;
-    char ch;
+    FILE *inputFile, *outputFile;/* input file and output file*/
+    char ch; /* characer for shifting in encryption algorithm*/
+    int k1, k2, k3;/* key 1 key 2 and key 3 */
 
 
 /*******************************************************************************
@@ -15,10 +15,12 @@
  *- none
  *******************************************************************************/
 void printEncryptionMenu() {
-    printf("\nEncryption Options\n"
+    printf("\n*********************************************************"
+           "\nEncryption Options\n"
            "1. Encrypt with Caeser Cipher\n"
            "2. Decrypt with Caeser Cipher\n"
            "3. Return to Main Menu\n"
+           "*********************************************************\n"
            "Enter a number of your choice>");
 }
 
@@ -56,6 +58,19 @@ void runEncryptionMenu() {
     }
 }
 
+/*******************************************************************************
+ *This function gets the encryption key to encrypt and decrypt the database.
+ *inputs:
+ *- none
+ *outputs:
+ *- none
+ *******************************************************************************/
+
+void getKey(){
+    printf("Enter 3 Number Key seperated by spaces>\n");
+    scanf("%d %d %d", &k1, &k2, &k3);
+}
+
 
 /*******************************************************************************
  *This function encrypts the database file containing the customer information
@@ -67,22 +82,24 @@ void runEncryptionMenu() {
  *******************************************************************************/
 
 int databaseEncryption(){
+    getKey();
     /*opens the customer_database file to be read*/
-    fp1 = fopen("customer_database","r");
-    if(fp1 == NULL)
+    inputFile = fopen("customer_database","r");
+    if(inputFile == NULL)
     {
         printf("Something went wrong!\n");
+        return 1;
     }
     /*opens the encrypted_database file to write*/
-    fp2 = fopen("encrypted_database","w");
-    if(fp2 == NULL)
+    outputFile = fopen("encrypted_database","w");
+    if(outputFile == NULL)
     {
         printf("Something went wrong!\n");
     }
     while(1) /*while the function is running*/
     {
         /*get char from customer database*/
-        ch = fgetc(fp1); 
+        ch = fgetc(inputFile); 
         if(ch == EOF)
         {
             /* stops getting char if the char */
@@ -93,33 +110,35 @@ int databaseEncryption(){
         {
             /*assigns the the ASCII value to the char*/
             /* its shifts in the negative direction */
-            ch = ch - (8 * 5 - 3);
+            ch = ch - (k1 * k2 - k3);
             /*puts the char into the encrypted_database file*/
-            fputc(ch, fp2);
+            fputc(ch, outputFile);
         }
     }
-    fclose(fp1);
-    fclose(fp2);
+    fclose(inputFile);
+    fclose(outputFile);
     return 0;
 }
 
 int databaseDecryption(){
+    getKey();
     /*opens the encrypted_database file to be read*/
-    fp1 = fopen("encrypted_database","r");
-    if(fp1 == NULL)
+    inputFile = fopen("encrypted_database","r");
+    if(inputFile == NULL)
     {
         printf("Something went wrong!\n");
+        return 1;
     }
     /*opens the decrypted_database file to write*/
-    fp2 = fopen("decrypted_database","w");
-    if(fp2 == NULL)
+    outputFile = fopen("decrypted_database","w");
+    if(outputFile == NULL)
     {
         printf("Something went wrong!\n");
     }
     while(1)/*while the function is running*/
     {
         /*get char from customer database*/
-        ch = fgetc(fp1);
+        ch = fgetc(inputFile);
         if(ch == EOF)
         {
             /* stops getting char if the char */
@@ -130,13 +149,13 @@ int databaseDecryption(){
         {
             /*assigns the the ASCII value to the char*/
             /* its shifts in the positive direction */
-            ch = ch + (8 * 5 - 3);
+            ch = ch + (k1 * k2 - k3);
             /*puts the char into the encrypted_database file*/
-            fputc(ch, fp2);
+            fputc(ch, outputFile);
         }
     }
-    fclose(fp1);
-    fclose(fp2);
+    fclose(inputFile);
+    fclose(outputFile);
     return 0;
 }
 

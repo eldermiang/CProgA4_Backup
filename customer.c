@@ -6,7 +6,6 @@
 #include "a3.h"
 
 /* Definitions */
-#define DEBUG
 #define NAME_LIMIT 40
 #define CUSTOMER_LIMIT 100
 
@@ -25,7 +24,8 @@
  *- none
  *******************************************************************************/
 void printCustomerMenu() {
-    printf("\nDatabase Options\n"
+    printf("\n*********************************************************\n"
+           "Database Options\n"
            "1. Add customer\n"
            "2. Delete customer\n"
            "3. Edit customer\n"
@@ -33,6 +33,7 @@ void printCustomerMenu() {
            "5. Export database to file\n"
            "6. Import database from file\n"
            "7. Return to Main Menu\n"
+           "*********************************************************\n"
            "Select an option>");
 }
 
@@ -140,16 +141,17 @@ void deleteCustomer(customer_t* customers, int* currIndex) {
 
     char customerName[NAME_LIMIT]; 
     /* Temporarily store customer name */
-    strcpy(customerName, customers[*currIndex].name);
+    strcpy(customerName, customers[selectedIndex].name);
     if (selectedIndex == *currIndex) {
         *currIndex -= 1;
     }
     else {
-        *currIndex -= 1;
+        /* Move everything to the left by 1 */
         while(selectedIndex < *currIndex - 1) {
             customers[selectedIndex] = customers[selectedIndex+1];
             selectedIndex++;
         }
+        *currIndex -= 1;
     }
     printf("Customer: '%s' successfully deleted\n", customerName);
 }
@@ -205,11 +207,11 @@ void displayCustomers(customer_t* customers, int* currIndex) {
 
     if ( *currIndex > 0 ) {
         printf("Displaying customer profiles:\n");
-        printf("%-12sCustomer Name%-16s| %-2sNumber%-3s| %-3sDOB%-5s| Credit Card Number | CVV |\n",
+        printf("%-14sCustomer Name%-16s| %-2sNumber%-3s| %-3sDOB%-5s| Credit Card Number | CVV |\n",
         empty_space, empty_space, empty_space, empty_space, empty_space, empty_space);
 
     for ( i = 0; i < *currIndex; i++ ) {
-        printf("%d. %-37s | %s | %02d/%02d/%02d | %s%-2s | %-3s |\n", 
+        printf("%3d. %-37s | %s | %02d/%02d/%02d | %s%-2s | %-3s |\n", 
             num_customer, 
             customers[i].name,
             customers[i].phoneNumber,
@@ -221,10 +223,6 @@ void displayCustomers(customer_t* customers, int* currIndex) {
             customers[i].cardcvv);
             num_customer++;
         }
-    }
-
-    else {
-        printf("There are no customers in the list\n");
     }
 }
 
@@ -271,11 +269,6 @@ void exportDatabase(customer_t* customers, int* currIndex) {
 
 }   
 
-/* Might be a good idea to implement some kind of validation for importing
-*  right now i can import in anything.
-*/
-
-/* kenson */
 /*******************************************************************************
  *This function imports all of the customers from an external file to the
  *internal customer database in the program.
@@ -286,10 +279,13 @@ void exportDatabase(customer_t* customers, int* currIndex) {
  *- none
  *******************************************************************************/
 void importDatabase(customer_t* customers, int* currIndex) {
-    int number_of_lines, i = 0;
-
+    int number_of_lines = 0;
+    int i = 0;
+    char dbName[50];
+    printf("Enter the name of the file>");
+    scanf("%s", dbName);
     /* open file in read mode */
-    FILE* fp = fopen("customer_database", "r");
+    FILE* fp = fopen(dbName, "r");
     /* Test import database in wrong format*/
     #ifdef DEBUG
         fp = fopen("test_db", "r");
@@ -297,20 +293,19 @@ void importDatabase(customer_t* customers, int* currIndex) {
     /* check if file exists */
     if ( fp == NULL ) {
         printf("Database failed to be read\n");
+        return;
     }
-        
-    char c;
-    c = fgetc(fp);
-    while(c != EOF) {
+    /* get character from customer db*/
+    int c;
+    for (c = fgetc(fp); c != EOF; c = fgetc(fp)) {
         if (c == '\n') {
-            number_of_lines = number_of_lines + 1;
+            number_of_lines += 1;
         }
-        c = fgetc(fp);
     }
    
-    rewind(fp);
+    rewind(fp); /* reset file position*/
 
-    /* count every new line */
+    /* scanning customer information from file */
     while ( i < number_of_lines ) {
             if (fscanf(fp, "%s %s %d %d %d %s %s\n", 
                 customers[i].name,
@@ -322,13 +317,15 @@ void importDatabase(customer_t* customers, int* currIndex) {
                 customers[i].cardcvv) == 7 )  {
                 i++;    
             }
+            /* inform user of failed import */
             else {
                 number_of_lines = 0;
                 printf("Failed to import database\n");
                 break;
             }  
       }  
-      
+
+        /* inform user that database import is completed */
       if (number_of_lines > 0 ) {
           printf("Database successfully imported\n");
       }
@@ -364,7 +361,8 @@ int countDigits(char* number) {
  *- none
  *******************************************************************************/
 void printEditMenu() {
-    printf("1. Name\n"
+    printf("\n*********************************************************\n"
+           "1. Name\n"
            "2. Phone number\n"
            "3. Day of birth\n"
            "4. Month of birth\n"
@@ -372,6 +370,7 @@ void printEditMenu() {
            "6. Card number\n"
            "7. Card cvv\n"
            "8. Exit\n"
+           "*********************************************************\n"
            "Select an option>");
 }
 

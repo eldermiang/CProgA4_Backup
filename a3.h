@@ -1,3 +1,6 @@
+/* Definitions */
+/* #define DEBUG */
+
 /* Structs */
 /* Customer */
 struct Date {
@@ -56,8 +59,6 @@ void compare_db();
 /* Text Encryption */
 void printEncryptionMenu();
 void runEncryptionMenu();
-void fileEncryption(char* string);
-void fileDecryption(char* string);
 int databaseEncryption();
 int databaseDecryption();
 

@@ -3,8 +3,6 @@
 #include <string.h>
 #include "a3.h"
 
-#define DEBUG
-
 /* Kenny */
 /*******************************************************************************
  *This function prints the menu with options to compress and decompress
@@ -14,10 +12,12 @@
  *- none
  *******************************************************************************/
 void printCompressMenu() {
-    printf("\nCompression Options\n"
+    printf("\n*********************************************************"
+           "\nCompression Options\n"
            "1. Compress database with Run-Length-Encoding\n"
            "2. Decompress database with Run-Length-Decoding\n"
            "3. Return to Main Menu\n"
+           "*********************************************************\n"
           );
 }
 
@@ -32,8 +32,7 @@ void printCompressMenu() {
 void runCompressMenu() {
 
     int choice = 0;
-    char * string = readDatabase();
-  
+    
     while (choice != 3) {
 
         printCompressMenu();
@@ -46,6 +45,7 @@ void runCompressMenu() {
         else {
             switch (choice) {
                 case 1 :
+                char * string = readDatabase();
                 run_length_encode(string);
                 break;
 
@@ -80,9 +80,11 @@ char* readDatabase() {
 
     database = fopen("customer_database", "r");
     if (database == NULL) {
-        printf("Read error");
+        printf("Read error\n");
+        /*free(string_db);*/
+        return "1";
     }
-
+    
     /* Get length of a file */
     fseek(database, 0, SEEK_END);
     fileSize = ftell(database);
@@ -118,6 +120,10 @@ void run_length_encode(char* string) {
     char encoded_text[length];
     char token = '.';
 
+    if(strlen(string) <= 1) {
+        return;
+    }
+
     FILE * new_database, * database;
 
     /* Iterate through input text */
@@ -125,7 +131,7 @@ void run_length_encode(char* string) {
         
         /* A counter for duplicates of characters */
         char_count = 1;
-/*While the character at the current index is the same at the next index*/
+    /*While the character at the current index is the same at the next index*/
         while (x + 1 < length && string[x] == string[x + 1]) {
             char_count++;
             x++;
@@ -134,7 +140,7 @@ void run_length_encode(char* string) {
         if (char_count > 1 && (string[x] >= '0' && string[x] <= '9')) {
             sprintf(run_count, "%d%c%c", char_count, token, string[x]);
         }
-        /* Append the countand character to the "encoded text" */
+        /* Append the count and character to the "encoded text" */
         else if (char_count > 1 && !(string[x] >= '0' && string[x] <= '9')) {
             sprintf(run_count, "%d%c", char_count, string[x]);
         }
@@ -171,9 +177,10 @@ void run_length_encode(char* string) {
     printf("Run-length encoding successful!\n");
 }
 
-/* Kenson */
+
 /*******************************************************************************
- *This function 
+ *This function decompresses the previously encoded text and stores in a new 
+ *database file.
  *inputs:
  *- none
  *outputs:
@@ -184,11 +191,13 @@ void run_length_decode() {
     FILE * db, *new_db;
     
     db = fopen("compressed_database", "r");
-    new_db = fopen("decompressed_database", "w");
 
-    if (db == NULL || new_db == NULL) {
-        printf("Read error");
+    if (db == NULL) {
+        printf("Read error\n");
+        return;
     }
+
+    new_db = fopen("decompressed_database", "w");
 
     while ((ch = fgetc(db)) != EOF) {
         /* Is number */

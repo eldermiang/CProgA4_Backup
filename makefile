@@ -2,11 +2,10 @@
 #How to use
 #Run the command "make (filename)" selecting one of the files from below
 #e.g. make main.out
-
-BIN 	=./bin/
-
 CC 		= gcc
 CFLAGS 	= -Wall -Werror -ansi -lm
+CTEST = -t
+CUSER = -u
 
 main.out: main.o compression.o encryption.o customer.o
 	$(CC) $(CFLAGS) -o main.out main.o compression.o encryption.o customer.o
@@ -22,8 +21,4 @@ encryption.o: encryption.c
 
 customer.o: customer.c
 	$(CC) $(CFLAGS) -c -o customer.o customer.c
-
-#Archived
-input.o: input.c
-	$(CC) $(CFLAGS) -c -o input.o input.c
 
