@@ -1,6 +1,6 @@
-/* Definitions */
-/* #define DEBUG */
-
+/* Include Guard */
+#ifndef A3_H
+#define A3_H
 /* Structs */
 /* Customer */
 struct Date {
@@ -19,6 +19,14 @@ struct Customer {
     char cardcvv[4];
 };
 typedef struct Customer customer_t;
+
+/* struct for the encryption key */
+struct Key {
+    int k1;
+    int k2;
+    int k3;
+};
+typedef struct Key key_t;
 
 /* Functions */
 /* Main Menu */
@@ -61,5 +69,4 @@ void printEncryptionMenu();
 void runEncryptionMenu();
 int databaseEncryption();
 int databaseDecryption();
-
-
+#endif

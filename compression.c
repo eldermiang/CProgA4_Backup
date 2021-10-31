@@ -14,8 +14,8 @@
 void printCompressMenu() {
     printf("\n*********************************************************"
            "\nCompression Options\n"
-           "1. Compress database with Run-Length-Encoding\n"
-           "2. Decompress database with Run-Length-Decoding\n"
+           "1. Compress exported database with Run-Length-Encoding\n"
+           "2. Decompress exported database with Run-Length-Decoding\n"
            "3. Return to Main Menu\n"
            "*********************************************************\n"
           );
@@ -46,6 +46,10 @@ void runCompressMenu() {
             switch (choice) {
                 case 1 :
                 char * string = readDatabase();
+                #ifdef DEBUG
+                    printf("*****Database Text****\n");
+                    printf("%s\n", string);
+                #endif
                 run_length_encode(string);
                 break;
 
@@ -108,7 +112,7 @@ char* readDatabase() {
 /*******************************************************************************
  *This function gets a string and prints the encoded string into a FILE
  *inputs:
- *- none
+ *- string
  *outputs:
  *- none
  *******************************************************************************/
@@ -147,9 +151,14 @@ void run_length_encode(char* string) {
         else {
             sprintf(run_count, "%c", string[x]);
         }
-        strncat(encoded_text, run_count, 100);
+        strncat(encoded_text, run_count, length);
     }
     
+    #ifdef DEBUG
+        printf("*****Encoded Text****\n");
+        printf("%s\n", encoded_text);       
+    #endif
+
     new_database = fopen("compressed_database", "w");
     database = fopen("customer_database", "r");
     

@@ -4,12 +4,22 @@
  * Kenny Doan (13554098), Kenson Lang (13554148)
  * A brief statement on what this program does:
  * 
- * A program that takes a text as an input and can perform
- * compression, encryption or both simultaneously. It also has the 
- * functionality to decrypt text that were encrypted using the
- * program
- * 
+ * A Customer Management System program that can perform
+ * compression and encryption on the database. It also has the 
+ * functionality to decrypt and decompress the database.
 *******************************************************************************/
+
+/*******************************************************************************
+* Standard Compilation Instructions
+* Compile the standard version of the project using "make" in the terminal
+* Run the project using the command ./main.out 
+********************************************************************************
+* Alternative Compilation mode
+* Compile the debug version of the project using "make debug"
+* Run "make clean" in the terminal before switching between the standard and
+* debug versions of the project.
+*******************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +38,8 @@
 int main(void) {
     #ifdef DEBUG 
         printf("Starting program in debugging mode\n");
+    #else 
+        printf("Release v1.0\n");
     #endif
     customer_t customers[CUSTOMER_LIMIT];
     int currIndex = 0;

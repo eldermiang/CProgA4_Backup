@@ -49,6 +49,9 @@ void printCustomerMenu() {
 void runCustomerMenu(customer_t* customers, int* currIndex) {
     int choice = 0;
     while (choice != 7) {
+        #ifdef DEBUG
+            printf("Current index: %d", *currIndex);
+        #endif
         printCustomerMenu();
         if (scanf("%d", &choice) != 1) {
             while(fgetc(stdin) != '\n'); /* Eliminate overflow */
@@ -125,7 +128,7 @@ void addCustomer(customer_t* customers, int* currIndex) {
  *******************************************************************************/
 void deleteCustomer(customer_t* customers, int* currIndex) {
     if (*currIndex == 0) {
-        printf("No customers in the database\n");
+        printf("Delete failed, no customers in the database\n");
         return;
     }
 
@@ -133,8 +136,11 @@ void deleteCustomer(customer_t* customers, int* currIndex) {
     printf("Select a customer to delete>");
     scanf("%d", &selectedIndex);
     selectedIndex -= 1;
+    #ifdef DEBUG 
+        printf("Processed selected index: %d\n", selectedIndex);
+    #endif
 
-    if (selectedIndex > *currIndex || selectedIndex < 0) {
+    if (selectedIndex >= *currIndex || selectedIndex < 0) {
         printf("Delete error, customer does not exist\n");
         return;
     }
@@ -142,7 +148,7 @@ void deleteCustomer(customer_t* customers, int* currIndex) {
     char customerName[NAME_LIMIT]; 
     /* Temporarily store customer name */
     strcpy(customerName, customers[selectedIndex].name);
-    if (selectedIndex == *currIndex) {
+    if (selectedIndex == *currIndex - 1) {
         *currIndex -= 1;
     }
     else {
@@ -167,7 +173,7 @@ void deleteCustomer(customer_t* customers, int* currIndex) {
  *******************************************************************************/
 void editCustomer(customer_t* customers, int* currIndex) {
     if (*currIndex == 0) {
-        printf("No customers in the database\n");
+        printf("Edit failed, no customers in the database\n");
         return;
     }
 
@@ -175,8 +181,11 @@ void editCustomer(customer_t* customers, int* currIndex) {
     printf("Select a customer to edit>");
     scanf("%d", &selectedIndex);
     selectedIndex -= 1;
+    #ifdef DEBUG 
+        printf("Processed selected index: %d\n", selectedIndex);
+    #endif
 
-    if (selectedIndex > *currIndex || selectedIndex < 0) {
+    if (selectedIndex >= *currIndex || selectedIndex < 0) {
         printf("Edit error, customer does not exist\n");
         return;
     }
@@ -197,7 +206,7 @@ void editCustomer(customer_t* customers, int* currIndex) {
  *******************************************************************************/
 void displayCustomers(customer_t* customers, int* currIndex) {
     if (*currIndex == 0) {
-        printf("No customers in the database\n");
+        printf("Display failed, no customers in the database\n");
         return;
     }
 
@@ -205,6 +214,9 @@ void displayCustomers(customer_t* customers, int* currIndex) {
     int i;
     char* empty_space = " ";
 
+    #ifdef DEBUG 
+        printf("Number of customers: %d\n", *currIndex);
+    #endif
     if ( *currIndex > 0 ) {
         printf("Displaying customer profiles:\n");
         printf("%-14sCustomer Name%-16s| %-2sNumber%-3s| %-3sDOB%-5s| Credit Card Number | CVV |\n",
@@ -238,7 +250,7 @@ void displayCustomers(customer_t* customers, int* currIndex) {
  *******************************************************************************/
 void exportDatabase(customer_t* customers, int* currIndex) {
     if (*currIndex == 0) {
-        printf("No customers in the database\n");
+        printf("Export failed, no customers in the database\n");
         return;
     }
     
@@ -258,6 +270,9 @@ void exportDatabase(customer_t* customers, int* currIndex) {
             customers[i].cardcvv);
             i++;
         }
+        #ifdef DEBUG 
+            printf("Number customers exported: %d\n", i);
+        #endif
         printf("Customer data successfully exported to database file\n");
     }
 
@@ -286,10 +301,6 @@ void importDatabase(customer_t* customers, int* currIndex) {
     scanf("%s", dbName);
     /* open file in read mode */
     FILE* fp = fopen(dbName, "r");
-    /* Test import database in wrong format*/
-    #ifdef DEBUG
-        fp = fopen("test_db", "r");
-    #endif
     /* check if file exists */
     if ( fp == NULL ) {
         printf("Database failed to be read\n");
@@ -302,34 +313,37 @@ void importDatabase(customer_t* customers, int* currIndex) {
             number_of_lines += 1;
         }
     }
+
+    #ifdef DEBUG 
+        printf("Number of lines in database: %d\n", number_of_lines);
+    #endif
    
     rewind(fp); /* reset file position*/
 
     /* scanning customer information from file */
     while ( i < number_of_lines ) {
-            if (fscanf(fp, "%s %s %d %d %d %s %s\n", 
-                customers[i].name,
-                customers[i].phoneNumber,
-                &customers[i].dateOfBirth.day,
-                &customers[i].dateOfBirth.month,
-                &customers[i].dateOfBirth.year,
-                customers[i].cardNo,
-                customers[i].cardcvv) == 7 )  {
-                i++;    
-            }
-            /* inform user of failed import */
-            else {
-                number_of_lines = 0;
-                printf("Failed to import database\n");
-                break;
-            }  
-      }  
+        if (fscanf(fp, "%s %s %d %d %d %s %s\n", 
+            customers[i].name,
+            customers[i].phoneNumber,
+            &customers[i].dateOfBirth.day,
+            &customers[i].dateOfBirth.month,
+            &customers[i].dateOfBirth.year,
+            customers[i].cardNo,
+            customers[i].cardcvv) == 7 )  {
+            i++;    
+        }
+        /* inform user of failed import */
+        else {
+            number_of_lines = 0;
+            printf("Failed to import database\n");
+            break;
+        }  
+    }  
 
-        /* inform user that database import is completed */
-      if (number_of_lines > 0 ) {
-          printf("Database successfully imported\n");
-      }
-        
+    /* inform user that database import is completed */
+    if (number_of_lines > 0 ) {
+        printf("Database successfully imported\n");
+    }  
     /* updating customer position in list */
     *currIndex = number_of_lines;
     fclose(fp);
@@ -347,7 +361,7 @@ void importDatabase(customer_t* customers, int* currIndex) {
 int countDigits(char* number) {
     int digits = strlen(number);
     #ifdef DEBUG
-        printf("%d", digits);
+        printf("Number of digits: %d\n", digits);
     #endif
     return digits;
 }
